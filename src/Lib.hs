@@ -12,15 +12,15 @@ toFrames :: String -> [Frame]
 toFrames [] = []
 toFrames ('X':frames) = Strike : toFrames frames
 toFrames (x:'/':frames) = Spare (digitToInt x) : toFrames frames
-toFrames (z:[]) = Pair (digitToInt z, 0) : []
+toFrames [z] = [Pair (digitToInt z, 0)]
 toFrames (x:y:z) = Pair (digitToInt x, digitToInt y) : toFrames z
 
 scoreForFrame :: [Frame] -> Int
 scoreForFrame [] = 0
-scoreForFrame (Strike:Strike:[]) = 0
-scoreForFrame (Spare _:x:[]) = 10 + toValue x
+scoreForFrame [Strike, Strike] = 0
+scoreForFrame [Spare _, x] = 10 + toValue x
 scoreForFrame (Strike:a:b:rest) = 10 +
-                                  nextTwoBallScores (a:b:[]) +
+                                  nextTwoBallScores [a, b] +
                                   scoreForFrame (a:b:rest)
 scoreForFrame (Spare x:a:rest) = 10 + nextBallScore a + scoreForFrame (a:rest)
 scoreForFrame (a:rest) = toValue a + scoreForFrame rest
